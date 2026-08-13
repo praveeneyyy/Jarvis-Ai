@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface: #1e1e1b;
+  --field: #262622;
+  --hover: #2e2e28;
+  --hover-2: #383830;
+  --line: #33332d;
+  --line-strong: #484840;
+  --ink: #f4f4ee;
+  --ink-2: #a8a89f;
+  --ink-3: #75756d;
+  --accent: #da7756;
+  --accent-ink: #e28464;
+  --accent-tint: rgba(218, 119, 86, 0.15);
+}
+
+/* ENFORCE SHARP 90-DEGREE CORNERS ON EVERYTHING */
+* {
+  border-radius: 0px !important;
+}
+
+body {
+  background-color: #121210;
+  color: #eaeae2;
+  font-family: var(--font-space-grotesk), 'Space Grotesk', -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+@keyframes pixel-on {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer-text {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: translateY(3px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes eq-bounce {
+  0%, 100% { height: 25%; }
+  50% { height: 100%; }
+}
+
+/* Monospaced Technical Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141412;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #383830;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #da7756;
+}
