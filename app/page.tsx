@@ -27,17 +27,20 @@ import {
   PanelRightClose, 
   PanelRightOpen, 
   Zap, 
+import VoiceReactiveOrb from "@/components/voice-orb/VoiceReactiveOrb";
+import { 
   Plus, 
   MessageSquare, 
   Trash2, 
   Volume2, 
   VolumeX, 
   ExternalLink,
-  Globe
+  Globe,
+  CircleDot
 } from "lucide-react";
 
 export default function NextJsJarvisApp() {
-  const [activeTab, setActiveTab] = useState<"chat" | "studio" | "diagnostics">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "orb" | "studio" | "diagnostics">("chat");
   const [activeModel, setActiveModel] = useState("Next.js 14 Engine (App Router)");
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
   const [thinkingVariant, setThinkingVariant] = useState<"Steps" | "Reasoning" | "Search" | "Coding">("Search");
@@ -226,6 +229,16 @@ export default function NextJsJarvisApp() {
             }`}
           >
             NEXT SYSTEM FEED
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("orb")}
+            className={`px-3 py-1 text-[11.5px] font-medium transition-colors border-l border-[#33332d] flex items-center gap-1.5 ${
+              activeTab === "orb" ? "bg-[#da7756] text-[#121210] font-semibold" : "text-[#88887f] hover:text-[#eaeae2]"
+            }`}
+          >
+            <CircleDot className="size-3 text-cyan-400" />
+            3D AI ORB CORE
           </button>
           <button
             type="button"
@@ -457,6 +470,14 @@ export default function NextJsJarvisApp() {
                 </span>
                 <ChatComposer />
               </motion.div>
+            </motion.div>
+          )}
+
+          {activeTab === "orb" && (
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="mx-auto flex w-full max-w-4xl flex-col gap-4 pb-32">
+              <div className="border border-[#33332d] bg-[#1a1a17] p-2">
+                <VoiceReactiveOrb className="w-full min-h-[500px]" />
+              </div>
             </motion.div>
           )}
 
