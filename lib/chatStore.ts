@@ -27,6 +27,10 @@ export function getSavedThreads(): ChatThread[] {
   }
 }
 
+export function loadChatThreads(): ChatThread[] {
+  return getSavedThreads();
+}
+
 export function saveThread(thread: ChatThread): ChatThread[] {
   if (typeof window === "undefined") return [];
   try {
@@ -43,6 +47,37 @@ export function saveThread(thread: ChatThread): ChatThread[] {
     console.error("Failed to save thread:", e);
     return [];
   }
+}
+
+export function createNewThread(initialTitle?: string): ChatThread {
+  const newThread: ChatThread = {
+    id: "thread_" + Date.now(),
+    title: initialTitle || "New Conversation",
+    updatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    messages: [],
+  };
+  saveThread(newThread);
+  return newThread;
+}
+
+export function saveChatMessage(threadId: string, message: ChatMessage): ChatThread[] {
+  const threads = getSavedThreads();
+  let target = threads.find((t) => t.id === threadId);
+  if (!target) {
+    target = {
+      id: threadId,
+      title: message.text.slice(0, 30) || "New Conversation",
+      updatedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      messages: [message],
+    };
+  } else {
+    target.messages.push(message);
+    if (target.messages.length === 1 && message.sender === "user") {
+      target.title = message.text.slice(0, 35) + (message.text.length > 35 ? "..." : "");
+    }
+    target.updatedAt = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+  return saveThread(target);
 }
 
 export function deleteThread(threadId: string): ChatThread[] {

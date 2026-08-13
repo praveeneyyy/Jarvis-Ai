@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-ibm-plex-mono",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "JARVIS AI — Next.js Engineering Workspace",
-  description: "Next.js 14 App Router Intelligence Workspace uniting 9 connected UI components.",
+  title: "JARVIS AI — AI Engineering Assistant",
+  description: "Ultra-minimalist Next.js 14 AI Engineering Workspace inspired by Linear and Vercel.",
 };
 
 export default function RootLayout({
@@ -25,9 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" class="dark">
+    <html lang="en" className="dark scroll-smooth">
       <body
-        className={`${spaceGrotesk.variable} ${ibmPlexMono.variable} bg-[#121210] text-[#eaeae2] antialiased selection:bg-[#da7756]/30 min-h-screen`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 min-h-screen`}
       >
         {children}
       </body>

@@ -89,7 +89,6 @@ const MODELS = [
 ];
 
 const FILES = ["flavor-chart.png", "summer-menu.pdf", "pos-export.csv"];
-const DICTATION = "Compare pistachio weekends to last summer";
 
 const AUTO_STEPS: {
   draft: string;
@@ -141,7 +140,7 @@ export default function PromptBar({ variant = "Rounded", onSend }: PromptBarProp
   const [connected, setConnected] = useState(false);
   const [active, setActive] = useState(0);
   const [listening, setListening] = useState(false);
-  const [auto, setAuto] = useState(true);
+  const [auto, setAuto] = useState(false);
   const [autoStep, setAutoStep] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [rowBox, setRowBox] = useState<{ top: number; height: number } | null>(null);
@@ -212,14 +211,71 @@ export default function PromptBar({ variant = "Rounded", onSend }: PromptBarProp
     return () => clearTimeout(t);
   }, [auto, autoStep]);
 
+  // Real Web Speech API Dictation (Live Voice Input)
+  const recognitionRef = useRef<any>(null);
+
   useEffect(() => {
-    if (!listening) return;
-    const t = setTimeout(() => {
-      setDraft((current) => (current ? `${current.trimEnd()} ${DICTATION}` : DICTATION));
+    if (!listening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+        recognitionRef.current = null;
+      }
+      return;
+    }
+
+    if (typeof window === "undefined") return;
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      console.warn("Speech Recognition API is not supported in this browser.");
       setListening(false);
-      inputRef.current?.focus();
-    }, 2200);
-    return () => clearTimeout(t);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+
+      recognition.onresult = (event: any) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript) {
+          setDraft(transcript);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+        setListening(false);
+      };
+
+      recognition.onend = () => {
+        setListening(false);
+      };
+
+      recognition.start();
+      recognitionRef.current = recognition;
+    } catch (e) {
+      console.error("Speech recognition initialization error:", e);
+      setListening(false);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+        recognitionRef.current = null;
+      }
+    };
   }, [listening]);
 
   useLayoutEffect(() => {
@@ -279,7 +335,7 @@ export default function PromptBar({ variant = "Rounded", onSend }: PromptBarProp
 
   return (
     <div
-      className="flex min-h-[384px] w-full max-w-[26.25rem] flex-col justify-end pb-8"
+      className="flex w-full max-w-2xl flex-col justify-end"
       onPointerDownCapture={takeOver}
       onKeyDownCapture={takeOver}
     >
