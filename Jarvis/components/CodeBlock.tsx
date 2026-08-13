@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 /* ─────────────────────────────────────────────────────────
  * CODE BLOCK
- * Agent-written code streams line by line; copy is live.
+ * Agent-written code streams line by line with live Copy & Run Sandbox.
  * ───────────────────────────────────────────────────────── */
 
 const LINE_MS = 240;
@@ -22,18 +22,18 @@ const LINES: Tok[][] = [
 ];
 
 const COLORS: Record<string, string> = {
-  kw: "var(--accent-ink, #a855f7)",
-  str: "var(--green, #2ecc71)",
-  num: "var(--orange, #f39c12)",
-  fn: "var(--ink, #00ffff)",
-  dim: "var(--ink-3, #777777)",
+  kw: "var(--accent-ink, #da7756)",
+  str: "#2ecc71",
+  num: "#f39c12",
+  fn: "#00ffff",
+  dim: "#75756d",
 };
 
 const RAW = `export async function churnBatch() {
-  const flavor = await getFlavor("pistachio");
-  const base = await dairy.fetch({ flavor });
-  await freezer.store(base, { temp: "-14C" });
-  return base.gallons;
+  const flavor = "pistachio";
+  const gallons = 42;
+  console.log("Churning batch:", flavor, "Yield:", gallons, "gallons");
+  return { flavor, gallons, temp: "-14C" };
 }`;
 
 export interface CodeBlockProps {
@@ -51,6 +51,8 @@ export default function CodeBlock({
 }: CodeBlockProps) {
   const [count, setCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [output, setOutput] = useState<string | null>(null);
   const done = count >= lines.length;
 
   useEffect(() => {
@@ -68,55 +70,93 @@ export default function CodeBlock({
     });
   }, [rawCode]);
 
+  const executeCode = useCallback(() => {
+    setRunning(true);
+    setOutput(null);
+    setTimeout(() => {
+      try {
+        const logs: string[] = [];
+        const customConsole = {
+          log: (...args: any[]) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(" ")),
+          error: (...args: any[]) => logs.push("ERROR: " + args.join(" ")),
+        };
+
+        const fn = new Function("console", `
+          ${rawCode}
+          if (typeof churnBatch === 'function') { return churnBatch(); }
+        `);
+
+        const result = fn(customConsole);
+        let resStr = logs.join("\n");
+        if (result !== undefined) {
+          resStr += (resStr ? "\nReturn: " : "") + JSON.stringify(result);
+        }
+        setOutput(resStr || "✓ Executed successfully (no output).");
+      } catch (err: any) {
+        setOutput("Execution Error: " + err.message);
+      } finally {
+        setRunning(false);
+      }
+    }, 400);
+  }, [rawCode]);
+
   return (
-    <div className="w-full max-w-[23.75rem] overflow-hidden rounded-card bg-surface shadow-card">
+    <div className="w-full max-w-[24rem] overflow-hidden bg-surface border border-line">
       {/* header */}
-      <div className="primitive-card-bar flex items-center justify-between border-b border-line px-3 py-2">
+      <div className="flex items-center justify-between border-b border-line px-3 py-2 bg-[#1a1a17]">
         <span className="flex items-baseline gap-2">
           <span className="font-mono text-[12px] font-medium text-ink">{filename}</span>
-          <span className="text-[11.5px] text-ink-3">{language}</span>
+          <span className="font-mono text-[11px] text-[#da7756]">{language}</span>
         </span>
-        <button
-          type="button"
-          aria-label="Copy code"
-          onClick={copy}
-          className={`flex h-6 items-center gap-1 rounded-[6px] px-1.5 text-[11.5px]
-            font-medium transition-colors duration-100 hover:bg-hover
-            ${copied ? "text-green-500" : "text-ink-3 hover:text-ink"}`}
-        >
-          {copied ? (
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-          ) : (
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
-          )}
-          {copied ? "Copied" : "Copy"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Run code"
+            onClick={executeCode}
+            disabled={running}
+            className="flex h-5.5 items-center gap-1 bg-[#da7756] px-2 text-[10.5px] font-mono font-bold text-[#121210] hover:bg-[#e28464] transition-colors"
+          >
+            {running ? "Executing…" : "▶ Run"}
+          </button>
+          <button
+            type="button"
+            aria-label="Copy code"
+            onClick={copy}
+            className={`flex h-5.5 items-center gap-1 border border-[#383830] bg-[#242420] px-2 text-[10.5px] font-mono font-medium transition-colors hover:bg-[#2c2c28] ${
+              copied ? "text-emerald-400 border-emerald-500/40" : "text-ink-3 hover:text-ink"
+            }`}
+          >
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
       </div>
 
       {/* code */}
-      <pre className="min-h-[137px] bg-inset px-3 py-2.5 font-mono text-[11.5px] leading-[1.7]">
+      <pre className="min-h-[130px] bg-[#121210] px-3 py-2.5 font-mono text-[11px] leading-[1.7] overflow-x-auto">
         {lines.slice(0, count).map((line, i) => (
-          <div
-            key={i}
-            className="flex"
-            style={{ animation: "fade-up 250ms cubic-bezier(0.23,1,0.32,1) both" }}
-          >
-            <span className="w-5 shrink-0 text-right text-[10.5px] leading-[1.86] text-ink-3/60 select-none">
-              {i + 1}
-            </span>
-            <span className="pl-2.5 whitespace-pre">
+          <div key={i} className="flex">
+            <span className="w-6 shrink-0 select-none text-right pr-3 text-[10px] text-[#55554d]">{i + 1}</span>
+            <div>
               {line.map((tok, j) => (
-                <span key={j} style={{ color: tok.c ? COLORS[tok.c] : "var(--ink-2, #ddd)" }}>
+                <span key={j} style={{ color: tok.c ? COLORS[tok.c] : "inherit" }}>
                   {tok.t}
                 </span>
               ))}
-              {i === count - 1 && !done && (
-                <span className="ml-0.5 inline-block h-3 w-[3px] translate-y-0.5 rounded-full bg-accent" />
-              )}
-            </span>
+            </div>
           </div>
         ))}
       </pre>
+
+      {/* Output Console Sandbox */}
+      {output && (
+        <div className="border-t border-[#da7756]/40 bg-[#171714] p-2.5 font-mono text-[11px] text-emerald-400">
+          <div className="flex items-center justify-between text-[10px] text-[#da7756] mb-1">
+            <span>[TERMINAL OUTPUT]</span>
+            <button onClick={() => setOutput(null)} className="text-[#88887f] hover:text-white">✕ Clear</button>
+          </div>
+          <pre className="whitespace-pre-wrap">{output}</pre>
+        </div>
+      )}
     </div>
   );
 }

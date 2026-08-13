@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingState from "@/Jarvis/components/LoadingState";
 import ThinkingState from "@/Jarvis/components/ThinkingState";
@@ -11,7 +11,30 @@ import FilterTable from "@/Jarvis/components/FilterTable";
 import PromptBar from "@/Jarvis/components/PromptBar";
 import ChatComposer from "@/Jarvis/components/ChatComposer";
 import ToolChips from "@/Jarvis/components/ToolChips";
-import { ChevronDown, Layers, Cpu, Check, FileText, PanelRightClose, PanelRightOpen, Play, Zap } from "lucide-react";
+import { 
+  getSavedThreads, 
+  saveThread, 
+  deleteThread, 
+  type ChatThread, 
+  type ChatMessage 
+} from "@/lib/chatStore";
+import { 
+  ChevronDown, 
+  Layers, 
+  Cpu, 
+  Check, 
+  FileText, 
+  PanelRightClose, 
+  PanelRightOpen, 
+  Zap, 
+  Plus, 
+  MessageSquare, 
+  Trash2, 
+  Volume2, 
+  VolumeX, 
+  ExternalLink,
+  Globe
+} from "lucide-react";
 
 export default function NextJsJarvisApp() {
   const [activeTab, setActiveTab] = useState<"chat" | "studio" | "diagnostics">("chat");
@@ -21,6 +44,23 @@ export default function NextJsJarvisApp() {
   const [isLoading, setIsLoading] = useState(false);
   const [showApproval, setShowApproval] = useState(true);
   const [artifactOpen, setArtifactOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Step 2 & 3: Chat History & Voice TTS states
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [currentThread, setCurrentThread] = useState<ChatThread | null>(null);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+
+  // Load saved threads on client mount
+  useEffect(() => {
+    const saved = getSavedThreads();
+    setThreads(saved);
+    if (saved.length > 0) {
+      setCurrentThread(saved[0]);
+    } else {
+      startNewChat();
+    }
+  }, []);
 
   const models = [
     { name: "Next.js 14 Engine (App Router)", desc: "Framer Motion animated streaming engine", tag: "Fast" },
@@ -28,12 +68,42 @@ export default function NextJsJarvisApp() {
     { name: "Vanilla 1 (Light)", desc: "Ultra-low latency streaming for rapid query processing", tag: "Light" },
   ];
 
-  const [livePrompt, setLivePrompt] = useState<string | null>(null);
-  const [liveAnswer, setLiveAnswer] = useState<string | null>(null);
+  const startNewChat = () => {
+    const newT: ChatThread = {
+      id: "thread_" + Date.now(),
+      title: "New Conversation",
+      updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: []
+    };
+    setCurrentThread(newT);
+  };
 
-  const handlePromptSubmit = async (text: string, modelName: string) => {
-    setLivePrompt(text);
+  const handlePromptSubmit = async (text: string, modelName: string, attachments: string[] = []) => {
+    if (!text.trim() && attachments.length === 0) return;
+
     setIsLoading(true);
+
+    const userMsg: ChatMessage = {
+      id: "msg_" + Date.now(),
+      sender: "user",
+      text: text + (attachments.length > 0 ? ` [Attachments: ${attachments.join(", ")}]` : ""),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    let activeT = currentThread || {
+      id: "thread_" + Date.now(),
+      title: text.slice(0, 30) || "Conversation",
+      updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: []
+    };
+
+    if (activeT.messages.length === 0) {
+      activeT.title = text.slice(0, 28) || "Query Thread";
+    }
+
+    activeT.messages.push(userMsg);
+    setCurrentThread({ ...activeT });
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -41,27 +111,63 @@ export default function NextJsJarvisApp() {
         body: JSON.stringify({ prompt: text, model: modelName })
       });
       const data = await res.json();
-      setLiveAnswer(data.answer || "JARVIS AI: Task completed.");
+      const botAnswer = data.answer || "JARVIS AI: Answer synthesized successfully.";
+
+      const botMsg: ChatMessage = {
+        id: "msg_" + (Date.now() + 1),
+        sender: "jarvis",
+        text: botAnswer,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        model: data.model || modelName,
+        sources: data.sources || []
+      };
+
+      activeT.messages.push(botMsg);
+      const updatedList = saveThread(activeT);
+      setThreads(updatedList);
+      setCurrentThread({ ...activeT });
+
+      // Step 3 Voice Output Synthesis
+      if (voiceEnabled && typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(botAnswer.slice(0, 250));
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+
     } catch (e) {
-      setLiveAnswer("JARVIS AI: I am ready to answer any question about anything in the world.");
+      console.error(e);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const removeThread = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = deleteThread(id);
+    setThreads(updated);
+    if (currentThread?.id === id) {
+      if (updated.length > 0) setCurrentThread(updated[0]);
+      else startNewChat();
+    }
+  };
+
   const triggerProcessingDemo = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    handlePromptSubmit("What are the key features of quantum computing?", activeModel);
   };
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#121210] text-[#eaeae2] font-sans">
-      {/* ── Next.js Animated Navigation Header ───────────────────────────── */}
+      {/* ── Next.js Header Navigation ─────────────────────────────────────── */}
       <header className="flex h-12 shrink-0 items-center justify-between border-b border-[#33332d] bg-[#1a1a17] px-4 font-mono text-[12px] z-20">
-        {/* Left: Brand & Model Dropdown */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setSidebarOpen((v) => !v)}
+            title="Toggle Sidebar History"
+            className="flex size-7 items-center justify-center bg-[#242420] text-[#a8a89f] border border-[#3a3a32] hover:text-white"
+          >
+            <MessageSquare className="size-3.5" />
+          </button>
           <div className="flex size-7 items-center justify-center bg-[#da7756] text-[#121210] font-bold">
             NEXT
           </div>
@@ -110,7 +216,7 @@ export default function NextJsJarvisApp() {
           </div>
         </div>
 
-        {/* Center: Animated Navigation Tabs */}
+        {/* Navigation Tabs */}
         <div className="flex items-center border border-[#33332d] bg-[#141412]">
           <button
             type="button"
@@ -141,16 +247,27 @@ export default function NextJsJarvisApp() {
           </button>
         </div>
 
-        {/* Right: Actions */}
+        {/* Right Actions & Voice Toggle */}
         <div className="flex items-center gap-2">
-          {isLoading && <LoadingState label="NEXT.JS RUNNING" variant="Drive" />}
+          <button
+            type="button"
+            onClick={() => setVoiceEnabled((v) => !v)}
+            title={voiceEnabled ? "Voice Output Active" : "Enable Voice Output"}
+            className={`flex size-7 items-center justify-center border transition-colors ${
+              voiceEnabled ? "bg-[#da7756] text-[#121210] border-[#da7756]" : "bg-[#242420] text-[#88887f] border-[#3a3a32] hover:text-white"
+            }`}
+          >
+            {voiceEnabled ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
+          </button>
+
+          {isLoading && <LoadingState label="PROCESSING" variant="Drive" />}
           <button
             type="button"
             onClick={triggerProcessingDemo}
             className="flex items-center gap-1.5 bg-[#da7756] px-3 py-1 text-[11.5px] font-bold text-[#121210] hover:bg-[#e28464] active:translate-y-0.5 transition-all"
           >
             <Zap className="size-3 fill-current" />
-            ANIMATE DEMO
+            LIVE DEMO
           </button>
           <button
             type="button"
@@ -163,8 +280,58 @@ export default function NextJsJarvisApp() {
         </div>
       </header>
 
-      {/* ── Main Split Framer-Motion Animated Workspace ─────────────────── */}
+      {/* ── Main Split Technical Workspace ───────────────────────────────── */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Step 2: Left Persistent History Sidebar */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.aside
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 240, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="border-r border-[#33332d] bg-[#161614] p-3 flex flex-col gap-3 font-mono text-[11px] shrink-0"
+            >
+              <button
+                onClick={startNewChat}
+                className="flex w-full items-center justify-center gap-2 bg-[#da7756] p-2 font-bold text-[#121210] hover:bg-[#e28464] transition-colors"
+              >
+                <Plus className="size-3.5" />
+                NEW CONVERSATION
+              </button>
+
+              <span className="text-[10px] font-bold text-[#75756d] uppercase tracking-wider">
+                [SAVED THREADS]
+              </span>
+
+              <div className="flex flex-1 flex-col gap-1 overflow-y-auto pr-1">
+                {threads.map((t) => (
+                  <div
+                    key={t.id}
+                    onClick={() => setCurrentThread(t)}
+                    className={`group flex items-center justify-between p-2 cursor-pointer border transition-colors ${
+                      currentThread?.id === t.id
+                        ? "bg-[#262622] border-[#da7756] text-white"
+                        : "bg-[#1a1a17] border-[#2a2a24] text-[#88887f] hover:text-white hover:border-[#383830]"
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1 truncate pr-1">
+                      <div className="truncate font-medium">{t.title}</div>
+                      <div className="text-[9.5px] text-[#66665c]">{t.updatedAt}</div>
+                    </div>
+                    <button
+                      onClick={(e) => removeThread(t.id, e)}
+                      className="opacity-0 group-hover:opacity-100 text-[#75756d] hover:text-red-400 p-1"
+                    >
+                      <Trash2 className="size-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
         {/* Main Feed Column */}
         <main className="flex flex-1 flex-col overflow-y-auto px-4 py-5 md:px-8">
           {activeTab === "chat" && (
@@ -178,25 +345,60 @@ export default function NextJsJarvisApp() {
               <div className="flex items-center justify-between border-b border-[#33332d] pb-2 font-mono text-[11px]">
                 <div className="flex items-center gap-2 text-[#da7756]">
                   <span className="size-2 bg-[#da7756] animate-pulse" />
-                  <span>NEXT.JS 14 APP ROUTER // ANIMATED RUNTIME ACTIVE</span>
+                  <span>THREAD // {currentThread?.title || "SYSTEM FEED"}</span>
                 </div>
                 <div className="text-[#75756d]">
-                  9 CONNECTED COMPONENTS LOADED
+                  LIVE OPENROUTER GROUNDING ACTIVE
                 </div>
               </div>
 
-              {/* Live OpenRouter Response Card */}
-              {livePrompt && (
-                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="border border-[#da7756] bg-[#1e1e1b] p-4 font-mono text-[12px]">
-                  <div className="flex items-center justify-between border-b border-[#33332d] pb-2 mb-2">
-                    <span className="font-bold text-[#da7756]">[USER QUERY] {livePrompt}</span>
-                    <span className="text-[#88887f]">OPENROUTER AI LIVE</span>
+              {/* Dynamic Conversation Messages */}
+              {currentThread?.messages.map((m) => (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`border p-4 font-mono text-[12px] ${
+                    m.sender === "user"
+                      ? "border-[#da7756]/50 bg-[#1e1a17] text-[#fff]"
+                      : "border-[#33332d] bg-[#1a1a17] text-[#eaeae2]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between border-b border-[#2d2d27] pb-2 mb-2">
+                    <span className="font-bold text-[#da7756]">
+                      [{m.sender.toUpperCase()}] {m.timestamp}
+                    </span>
+                    {m.model && <span className="text-[10.5px] text-[#75756d]">{m.model}</span>}
                   </div>
-                  <p className="font-sans text-[13.5px] leading-relaxed text-[#eaeae2] whitespace-pre-wrap">
-                    {liveAnswer || "JARVIS AI is synthesizing answer via OpenRouter..."}
+                  <p className="font-sans text-[13.5px] leading-relaxed whitespace-pre-wrap">
+                    {m.text}
                   </p>
+
+                  {/* Step 1: Real-time Web Search Grounded Citations */}
+                  {m.sources && m.sources.length > 0 && (
+                    <div className="mt-3 border-t border-[#2d2d27] pt-2 font-mono text-[11px]">
+                      <span className="text-[#da7756] flex items-center gap-1 mb-1 font-bold">
+                        <Globe className="size-3" /> Grounded Search Sources:
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {m.sources.map((src, i) => (
+                          <a
+                            key={i}
+                            href={src.href || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 bg-[#242420] border border-[#383830] px-2 py-1 text-[10.5px] text-[#a8a89f] hover:text-white hover:border-[#da7756] transition-colors"
+                          >
+                            <span>{src.name}</span>
+                            <span className="text-[#66665c]">({src.domain})</span>
+                            <ExternalLink className="size-2.5 text-[#da7756]" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
-              )}
+              ))}
 
               {/* 1. Agent Trace (ThinkingState) */}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="border border-[#33332d] bg-[#1a1a17] p-4">
@@ -243,7 +445,7 @@ export default function NextJsJarvisApp() {
               {/* 4. Code Block */}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="border border-[#33332d] bg-[#1a1a17] p-4">
                 <span className="mb-3 block font-mono text-[11px] font-bold text-[#da7756]">
-                  [04] CODEBLOCK // SYNTAX CODE STREAMING
+                  [04] CODEBLOCK // SYNTAX CODE STREAMING WITH LIVE RUNNER
                 </span>
                 <CodeBlock />
               </motion.div>
