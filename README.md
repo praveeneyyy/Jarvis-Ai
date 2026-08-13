@@ -1,38 +1,53 @@
-# ✦ JARVIS AI — Next.js 14 Engineering Workspace & Component Suite
+# ✦ JARVIS AI — Native Standalone Desktop GUI & Engineering Workspace
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.1-black.svg?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Electron](https://img.shields.io/badge/Electron-29.1-47848f.svg?style=for-the-badge&logo=electron)](https://www.electronjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8.svg?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-11.0-violet.svg?style=for-the-badge)](https://www.framer.com/motion/)
 [![OpenRouter](https://img.shields.io/badge/OpenRouter_API-Multi--Model-orange.svg?style=for-the-badge)](https://openrouter.ai/)
 
-**JARVIS AI** is an autonomous product engineering intelligence workspace built on **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Framer Motion**. It features an industrial 0px sharp technical aesthetic, real-time AI prompt completions powered by OpenRouter, and a suite of 9 connected UI widgets.
+**JARVIS AI** is packaged as a **native standalone desktop GUI application window** powered by **Electron 29**, **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Framer Motion**. It launches as a dedicated desktop app window on Windows, macOS, and Linux without requiring a separate web browser.
 
 ---
 
-## 🌟 Key Features
+## 🖥️ How to Launch the Standalone Desktop GUI Application
 
-* **Next.js 14 App Router Architecture**: Server-Side Rendering (SSR), API routes, and optimized font loading using `Space Grotesk` & `IBM Plex Mono`.
-* **Multi-Model OpenRouter Cascade**: Intelligent failover system routing queries across `Llama 3.3 70B`, `Gemini 2.0 Flash`, `DeepSeek R1`, `Mistral 7B`, and `Qwen 2.5 Coder` to guarantee answers for any question.
-* **9 Interactive UI Components**: Full component suite with `"use client"` directives for real-time trace inspection, streaming, code viewing, and human approvals.
-* **Framer Motion Layout Animations**: Smooth spring animations for artifact drawers, model selectors, and workspace tab transitions.
-* **Industrial Precision Design**: Minimalist monochrome styling with zero border-radius (`0px` sharp corners), high-contrast tabular monospaced typography, and terracotta accents (`#da7756`).
+### Method 1: 1-Click Batch Launcher (Windows)
+Double-click **`start-jarvis-gui.bat`** in the project folder, or run:
+```powershell
+.\start-jarvis-gui.bat
+```
+
+### Method 2: NPM Terminal Command
+Run any of the following commands in your PowerShell terminal:
+```powershell
+npm run app
+# OR
+npm run gui
+# OR
+npm run desktop
+```
+> *This automatically initializes the background server and pops up the native desktop app window!*
 
 ---
 
-## 🧩 9-Component Architecture Overview
+## 🌟 Desktop App Features
 
-| # | Component | Location | Description |
-|---|---|---|---|
-| 1 | **`ThinkingState`** | `Jarvis/components/ThinkingState.tsx` | Expandable step-by-step reasoning trace (`Steps`, `Reasoning`, `Search`, `Coding`). |
-| 2 | **`ToolChips`** | `Jarvis/components/ToolChips.tsx` | Compact tool execution trace with collapsible sub-lines and file diff chips (`+74 -41`). |
-| 3 | **`StreamingText`** | `Jarvis/components/StreamingText.tsx` | Blur text streaming with inline citations, sources drawer, and follow-up prompt chips. |
-| 4 | **`CodeBlock`** | `Jarvis/components/CodeBlock.tsx` | Syntax-highlighted streaming code viewer with a live clipboard copy button. |
-| 5 | **`ApprovalCard`** | `Jarvis/components/ApprovalCard.tsx` | Human-in-the-loop multi-step approval questionnaire wizard for system actions. |
-| 6 | **`FilterTable`** | `Jarvis/components/FilterTable.tsx` | Status filter chips (`All`, `To do`, `In Progress`, `Completed`) with dynamic table filter. |
-| 7 | **`PromptBar`** | `Jarvis/components/PromptBar.tsx` | Composer bar with `@` data sources popup, `/` slash commands menu, model selector, voice dictation, and attachments. |
-| 8 | **`ChatComposer`** | `Jarvis/components/ChatComposer.tsx` | Interactive tabbed panel (`Flavors` / `Suppliers`) with sectioned replies. |
-| 9 | **`LoadingState`** | `Jarvis/components/LoadingState.tsx` | Shimmer pixel-grid loader (`Drive`, `Dots`, `Orbit`) with live tabular timer. |
+* **Dedicated Standalone GUI Window**: Native desktop application window (1280x820) with custom window controls and background color `#121210`.
+* **Multi-Model OpenRouter Cascade**: Answers any question on any topic using real-time AI API completions (`Llama 3.3 70B`, `Gemini 2.0 Flash`, `DeepSeek R1`, `Mistral 7B`).
+* **9 Connected UI Modules**:
+  1. `ThinkingState` — Expandable agent reasoning trace (`Steps`, `Reasoning`, `Search`, `Coding`)
+  2. `ToolChips` — Collapsible tool execution lines and file diff chips (`+74 -41`)
+  3. `StreamingText` — Word-by-word blur streaming with citations and sources drawer
+  4. `CodeBlock` — Syntax code streaming with live Copy button
+  5. `ApprovalCard` — Interactive human approval wizard for system operations
+  6. `FilterTable` — Task status filter chips (`All`, `To do`, `In Progress`, `Completed`) with dynamic table filter
+  7. `PromptBar` — Interactive prompt bar composer with `@` data sources, `/` commands, dictation, and attachments
+  8. `ChatComposer` — Tabbed conversation panel (`Flavors` / `Suppliers`) with sectioned replies
+  9. `LoadingState` — Shimmer pixel-grid loader (`Drive`, `Dots`, `Orbit`) with live timer
+* **Framer Motion Layout Animations**: Smooth spring animations for artifact drawers, model selectors, and workspace tabs.
+* **Industrial 0px Sharp Aesthetics**: Space Grotesk + IBM Plex Mono fonts with zero border-radius.
 
 ---
 
@@ -40,6 +55,9 @@
 
 ```
 c:\Projects\Jarvis\
+├── electron/
+│   ├── main.js                          # Native Electron BrowserWindow process
+│   └── preload.js                       # Secure IPC context bridge
 ├── app/
 │   ├── layout.tsx                       # Next.js RootLayout with Next font optimization
 │   ├── globals.css                      # Design tokens, keyframes, 0px sharp corner rules
@@ -47,68 +65,33 @@ c:\Projects\Jarvis\
 │   └── api/chat/route.ts                # OpenRouter API multi-model cascade route
 ├── .env.local                           # Local environment secrets (OpenRouter API key)
 ├── .gitignore                           # Git ignore rules protecting API keys and builds
-├── package.json                         # Dependencies & Next.js scripts
+├── start-jarvis-gui.bat                 # 1-Click native GUI desktop app launcher
+├── package.json                         # Dependencies & Electron desktop launcher scripts
 ├── next.config.mjs                      # Next.js build configuration
-├── tsconfig.json                        # TypeScript App Router path configuration (@/, @components/)
+├── tsconfig.json                        # TypeScript App Router path configuration
 ├── tailwind.config.js                   # Tailwind CSS configuration for app/ and Jarvis/components/
 └── Jarvis/components/                   # The 9 React TSX Component Modules
 ```
 
 ---
 
-## ⚙️ Step-by-Step Setup & Installation Guide
+## ⚙️ Setup Instructions
 
-### Prerequisites
-* **Node.js**: v18.17.0 or higher installed.
-* **Git**: Installed on your operating system.
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/praveeneyyy/Jarvis-Ai.git
-cd Jarvis-Ai
-```
-
-### 2. Install Dependencies
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Configure API Key
-Create a `.env.local` file in the root directory of the project:
-
+### 2. Configure API Key
+Create or verify `.env.local`:
 ```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENROUTER_API_KEY=sk-or-v1-...
 ```
-> *Note: You can get a 100% free OpenRouter API key at [openrouter.ai](https://openrouter.ai/). `.env.local` is listed in `.gitignore` and will never be pushed to public repositories.*
 
-### 4. Start the Next.js Development Server
+### 3. Launch Standalone GUI App
 ```bash
-npm run dev
+npm run app
 ```
-
-Open **[http://localhost:3000](http://localhost:3000)** in your web browser to interact with the application.
-
----
-
-## 💻 Building for Production
-
-To create an optimized production build:
-
-```bash
-npm run build
-npm run start
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 
