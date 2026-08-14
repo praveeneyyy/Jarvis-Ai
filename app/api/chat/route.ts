@@ -48,7 +48,16 @@ async function searchWeb(query: string) {
 
 export async function POST(req: Request) {
   try {
-    const { prompt, model } = await req.json();
+    const body = await req.json();
+    let prompt = body.prompt;
+    const model = body.model;
+    const inputMessages = body.messages;
+
+    // Handle string or array of messages
+    if (!prompt && Array.isArray(inputMessages) && inputMessages.length > 0) {
+      const lastMsg = inputMessages[inputMessages.length - 1];
+      prompt = lastMsg.content || lastMsg.text;
+    }
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -73,28 +82,41 @@ export async function POST(req: Request) {
     // Build context with search results if available
     let searchContext = "";
     if (searchSources.length > 0) {
-      searchContext = "\n\nReal-time Web Search Results:\n" + 
-        searchSources.map((s, i) => `[${i+1}] ${s.name} (${s.domain}): ${s.snippet}`).join("\n");
+      searchContext = "\n\nBackground Information:\n" + 
+        searchSources.map((s, i) => `[${i+1}] ${s.name}: ${s.snippet}`).join("\n");
     }
 
-    // Cascade of free models to guarantee a 100% success rate for ANY question
     const candidateModels = [
       "meta-llama/llama-3.3-70b-instruct:free",
       "google/gemini-2.0-flash-lite-preview-02-05:free",
       "deepseek/deepseek-r1:free",
-      "mistralai/mistral-7b-instruct:free",
-      "qwen/qwen-2.5-coder-32b-instruct:free"
+      "qwen/qwen-2.5-coder-32b-instruct:free",
+      "mistralai/mistral-7b-instruct:free"
     ];
 
-    if (model && model.includes("Sprinkles")) {
-      candidateModels.unshift("google/gemini-2.0-flash-lite-preview-02-05:free");
-    } else if (model && model.includes("Vanilla")) {
-      candidateModels.unshift("deepseek/deepseek-r1:free");
+    const apiMessages: { role: string; content: string }[] = [
+      {
+        role: "system",
+        content: "You are J.A.R.V.I.S AI, an elite, all-knowing, highly intelligent AI assistant. Provide the EXACT, COMPLETE, FULL, and DIRECT answer to ANY question directly in your response text. DO NOT redirect the user to external links, do not tell them to click links, and do not withhold information. Write out all explanations, steps, facts, and code snippets completely, clearly, and thoroughly directly inside the message."
+      }
+    ];
+
+    if (Array.isArray(inputMessages) && inputMessages.length > 1) {
+      for (const m of inputMessages.slice(-6)) {
+        apiMessages.push({
+          role: m.role || (m.sender === "user" ? "user" : "assistant"),
+          content: m.content || m.text
+        });
+      }
+    } else {
+      apiMessages.push({
+        role: "user",
+        content: prompt + (searchContext ? searchContext : "")
+      });
     }
 
     let lastError = null;
 
-    // Try candidate models in order
     for (const targetModel of candidateModels) {
       try {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -103,20 +125,11 @@ export async function POST(req: Request) {
             "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json",
             "HTTP-Referer": "http://localhost:3000",
-            "X-Title": "JARVIS AI Workspace"
+            "X-Title": "J.A.R.V.I.S AI Workspace"
           },
           body: JSON.stringify({
             model: targetModel,
-            messages: [
-              {
-                role: "system",
-                content: "You are JARVIS, an autonomous, all-knowing, highly intelligent AI assistant. Answer ANY question about ANYTHING in the world accurately, clearly, thoroughly, and helpfully." + (searchContext ? " Use the provided real-time web search results to ground your answer with current facts." : "")
-              },
-              {
-                role: "user",
-                content: prompt + searchContext
-              }
-            ]
+            messages: apiMessages
           })
         });
 
@@ -126,8 +139,7 @@ export async function POST(req: Request) {
           if (reply && reply.trim().length > 0) {
             return NextResponse.json({ 
               answer: reply, 
-              model: targetModel,
-              sources: searchSources
+              model: targetModel
             });
           }
         } else {
@@ -141,14 +153,13 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ 
-      answer: `JARVIS AI Knowledge Engine: Received query "${prompt}". Processing query parameters across active intelligence channels.`,
-      sources: searchSources
+      answer: `J.A.R.V.I.S AI: Query received for "${prompt}". Processing request across active intelligence channels.`
     });
 
   } catch (error: any) {
     console.error("Chat API Exception:", error);
     return NextResponse.json({ 
-      answer: "JARVIS AI: Ready to answer any question on any topic." 
+      answer: "J.A.R.V.I.S AI: Ready to provide complete exact answers on any topic." 
     });
   }
 }

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JARVIS AI — Complete Project Analysis & College Review Guide</title>
+  <style>
+    :root {
+      --primary: #4338ca;
+      --primary-dark: #312e81;
+      --accent: #6366f1;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg: #ffffff;
+      --surface: #f8fafc;
+      --border: #e2e8f0;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: #f1f5f9;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--bg);
+      padding: 48px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-banner {
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .header-banner h1 {
+      font-size: 28px;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .header-banner .meta {
+      font-size: 14px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .print-btn-bar {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(67, 56, 202, 0.2);
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+    }
+
+    h2 {
+      font-size: 20px;
+      color: var(--primary-dark);
+      margin-top: 36px;
+      margin-bottom: 16px;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 16px;
+      color: var(--text);
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px 0;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface);
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    tr:nth-child(even) {
+      background: #fcfdfe;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", Consolas, Menlo, monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin: 14px 0 20px 0;
+    }
+
+    code {
+      font-family: "JetBrains Mono", Consolas, Menlo, monospace;
+      font-size: 12.5px;
+      background: #f1f5f9;
+      color: #b91c1c;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: var(--surface);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 6px 6px 0;
+      font-style: normal;
+      font-size: 13.5px;
+    }
+
+    .alert-box {
+      border-left: 4px solid #f59e0b;
+      background: #fffbeb;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 13.5px;
+      color: #92400e;
+    }
+
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      color: var(--primary-dark);
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 8px;
+      list-style-type: none;
+      margin-left: 0;
+    }
+
+    .toc-grid a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .toc-grid a:hover {
+      text-decoration: underline;
+    }
+
+    .qa-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .qa-card strong {
+      color: var(--primary-dark);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13.5px;
+    }
+
+    .qa-card p {
+      margin-bottom: 0;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .print-btn-bar {
+        display: none;
+      }
+      h2 {
+        page-break-before: auto;
+        break-before: auto;
+      }
+      pre, table, .qa-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="print-btn-bar">
+      <button class="btn" onclick="window.print()">🖨️ Save as PDF / Print Guide</button>
+    </div>
+
+    <div class="header-banner">
+      <h1>JARVIS AI — Complete Technical Analysis & College Viva Guide</h1>
+      <div class="meta">
+        <span><strong>Department:</strong> Computer Science & Engineering</span>
+        <span><strong>Project:</strong> jarvis-ai-desktop (v2.2.0)</span>
+        <span><strong>Stack:</strong> Next.js 14, React 18, TypeScript, Three.js, Electron</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <h3>Quick Jump Table of Contents</h3>
+      <ul class="toc-grid">
+        <li><a href="#overview">1. Project Overview & Pitch</a></li>
+        <li><a href="#titles">2. Suggested Academic Titles</a></li>
+        <li><a href="#problem">3. Problem Statement & Objectives</a></li>
+        <li><a href="#stack">4. Complete Technology Stack</a></li>
+        <li><a href="#architecture">5. Architecture & Execution Tiers</a></li>
+        <li><a href="#dataflow">6. Step-by-Step Data Flow Trace</a></li>
+        <li><a href="#ai-cascade">7. Multi-LLM Fallback Cascade</a></li>
+        <li><a href="#grounding">8. Real-Time Web Grounding</a></li>
+        <li><a href="#audio-3d">9. 3D Web Audio Shader Core</a></li>
+        <li><a href="#code-sandbox">10. Interactive Code Sandbox</a></li>
+        <li><a href="#storage">11. Storage & State Architecture</a></li>
+        <li><a href="#security">12. Security & Electron Isolation</a></li>
+        <li><a href="#speech">13. 3-Minute Presentation Speech</a></li>
+        <li><a href="#viva-qa">14. Core Viva Questions & Answers</a></li>
+        <li><a href="#trick-qa">15. 17 Difficult Trick Questions</a></li>
+        <li><a href="#cheat-sheet">16. One-Page Revision Cheat Sheet</a></li>
+      </ul>
+    </div>
+
+    <h2 id="overview">PART 1 — PROJECT OVERVIEW</h2>
+    <p><strong>JARVIS AI</strong> is a hybrid desktop-and-web AI Engineering Workspace designed to assist developers and students with software engineering workflows, real-time code synthesis, automated technical inquiry, and knowledge discovery. Built on <strong>Next.js 14 (App Router)</strong> and wrapped for desktop execution using <strong>Electron 29</strong>, the application combines a high-performance <strong>Multi-LLM Serverless Cascade</strong> (via OpenRouter), <strong>real-time live web grounding</strong> (DuckDuckGo search scraping), <strong>Web Audio-driven 3D neural core visualization</strong> (Three.js / React Three Fiber / GLSL Simplex Shaders), and interactive UI widgets including a client-side code execution sandbox.</p>
+
+    <h3>Verbal Pitch Options</h3>
+    <blockquote>
+      <strong>30-Second Pitch:</strong> "Respected Professor, JARVIS AI is an AI-powered Engineering Workspace built using Next.js 14, TypeScript, and Electron. Unlike conventional chatbots that rely on a single model and return static text, JARVIS implements a resilient multi-model fallback cascade across five leading LLMs, features real-time web grounding via dynamic search parsing, and includes interactive UI widgets like an in-browser code execution sandbox and a voice-reactive 3D neural core powered by Three.js shaders and Web Audio FFT analysis."
+    </blockquote>
+    <blockquote>
+      <strong>1-Minute Pitch:</strong> "Good morning, Professor. My project is JARVIS AI, an autonomous AI engineering assistant designed to streamline developer workflows. On the frontend, it uses Next.js 14 App Router, Tailwind CSS, and Framer Motion, wrapped inside Electron for a native desktop experience. On the backend, we implemented a server-side Next.js route handler that connects to OpenRouter. To guarantee 100% uptime without relying on a single paid API, we engineered a priority cascade mechanism that fails over between Llama 3.3, Gemini 2.0, DeepSeek R1, Mistral, and Qwen. For temporal queries like current news or tech releases, the backend automatically performs DuckDuckGo web scraping and injects search snippets directly into the prompt context. Additionally, JARVIS provides an in-browser code execution sandbox and an interactive 3D audio-reactive neural core built with WebGL and custom GLSL shaders."
+    </blockquote>
+
+    <h2 id="titles">PART 2 — PROJECT TITLES & TAGLINES</h2>
+    <ul>
+      <li><strong>Short Title:</strong> JARVIS AI — AI Engineering Workspace</li>
+      <li><strong>Technical Title:</strong> Multi-Model AI Engineering Assistant with Real-Time Web Grounding and Interactive Execution Sandbox</li>
+      <li><strong>Academic / Project-Review Title:</strong> Design and Implementation of an Autonomous AI-Powered Developer Workspace Featuring Multi-LLM Cascade Orchestration, Real-Time Web Grounding, and Audio-Reactive Neural Visualizations</li>
+      <li><strong>One-Line Project Tagline:</strong> <em>"An intelligent Next.js & Electron engineering assistant unifying multi-model AI reasoning, live web grounding, and sandboxed code execution."</em></li>
+    </ul>
+
+    <h2 id="problem">PART 3 & 4 — PROBLEM STATEMENT & OBJECTIVES</h2>
+    <h3>Formal Problem Statement</h3>
+    <blockquote>
+      "To design and develop a resilient, full-stack AI engineering assistant that mitigates developer context switching and AI endpoint downtime by implementing a serverless multi-LLM failover cascade, dynamic real-time web grounding, client-side conversation state persistence, and interactive in-browser code execution."
+    </blockquote>
+
+    <h3>Primary Objectives</h3>
+    <ol>
+      <li><strong>High Availability AI Inference:</strong> Ensure continuous uptime by implementing a priority-ordered model cascade across 5 distinct LLM architectures (Llama 3.3, Gemini 2.0, DeepSeek R1, Mistral 7B, Qwen 2.5).</li>
+      <li><strong>Live Knowledge Grounding:</strong> Automatically detect temporal queries and scrape real-time search snippets to eliminate outdated hallucinations.</li>
+      <li><strong>Interactive Code Execution:</strong> Enable in-browser execution of generated JavaScript/TypeScript code directly in the conversation stream without external compilers.</li>
+      <li><strong>Local State Persistence:</strong> Provide instant conversation thread management using browser-local storage with zero external database dependencies.</li>
+      <li><strong>Audio-Reactive 3D GPU Rendering:</strong> Implement custom GLSL Simplex Noise shaders on an icosahedron geometry modulated by Web Audio API Fast Fourier Transform (FFT) frequency bands.</li>
+    </ol>
+
+    <h2 id="stack">PART 7 — COMPLETE TECHNOLOGY STACK</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Version</th>
+          <th>Purpose in this Project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Framework</strong></td>
+          <td>Next.js (App Router)</td>
+          <td>^14.1.3</td>
+          <td>Core React full-stack framework handling routing, SSR/CSR, and backend API routes.</td>
+        </tr>
+        <tr>
+          <td><strong>UI Library</strong></td>
+          <td>React</td>
+          <td>^18.2.0</td>
+          <td>Component-based UI rendering, state hooks, and virtual DOM diffing.</td>
+        </tr>
+        <tr>
+          <td><strong>Language</strong></td>
+          <td>TypeScript</td>
+          <td>^5.3.3</td>
+          <td>Static type safety across chat messages, audio frequency structures, and UI props.</td>
+        </tr>
+        <tr>
+          <td><strong>Styling</strong></td>
+          <td>Tailwind CSS</td>
+          <td>^3.4.1</td>
+          <td>Utility-first CSS styling for custom glassmorphic panels, shells, and layouts.</td>
+        </tr>
+        <tr>
+          <td><strong>3D Graphics</strong></td>
+          <td>Three.js / React Three Fiber</td>
+          <td>^0.161.0 / ^8.15.16</td>
+          <td>WebGL 3D rendering engine and React reconciler for the 3D neural core.</td>
+        </tr>
+        <tr>
+          <td><strong>Desktop Wrapper</strong></td>
+          <td>Electron</td>
+          <td>^29.1.0</td>
+          <td>Native desktop window manager wrapping the local Next.js instance.</td>
+        </tr>
+        <tr>
+          <td><strong>AI Gateway</strong></td>
+          <td>OpenRouter API</td>
+          <td>REST</td>
+          <td>Universal API gateway connecting the Next.js route handler to open LLM endpoints.</td>
+        </tr>
+        <tr>
+          <td><strong>Search Engine</strong></td>
+          <td>DuckDuckGo HTML Endpoint</td>
+          <td>HTTP Scraping</td>
+          <td>Server-side live search results extraction for temporal query grounding.</td>
+        </tr>
+        <tr>
+          <td><strong>Client Storage</strong></td>
+          <td>localStorage</td>
+          <td>Web API</td>
+          <td>Local persistence for conversation threads and theme preferences.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="architecture">PART 11 — SYSTEM ARCHITECTURE</h2>
+    <pre>
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. CLIENT / PRESENTATION TIER (Next.js Client Components)              │
+│    • User interaction via Input Bar, Quick Actions, or Web Speech Mic  │
+│    • Local thread state retrieved/saved via `localStorage`             │
+│    • Real-time 3D GPU rendering loop (60 FPS) via Three.js & WebGL     │
+│    • Optimistic UI update immediately displays user message            │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │ HTTP POST /api/chat
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 2. SERVER ROUTE HANDLER TIER (`app/api/chat/route.ts`)                 │
+│    • Reads incoming `{ prompt, model }` JSON payload                   │
+│    • Evaluates temporal keywords via RegExp heuristic                  │
+│    • If triggered: executes DuckDuckGo HTML scraping                   │
+│    • Parses clean URLs, domain names, and content snippets             │
+│    • Synthesizes grounded system instructions                          │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │ HTTPS REST (OpenRouter Gateway)
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. INFERENCE & CASCADE TIER (OpenRouter API)                           │
+│    • Attempts Primary Model (e.g., Llama 3.3 70B)                      │
+│    • On failure/rate limit: Catch block triggers Model 2 (Gemini 2.0)  │
+│    • On subsequent failures: Cascades to DeepSeek R1, Mistral, Qwen    │
+│    • Successful JSON completion response extracted                     │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │ JSON Response `{ answer, sources }`
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 4. INTENT RENDERING TIER (Client UI)                                   │
+│    • Next.js Client updates thread store (`lib/chatStore.ts`)          │
+│    • Detects keywords (code, tool, table, approve, think)              │
+│    • Dynamically mounts corresponding interactive widgets:             │
+│      - `<CodeBlock />` with live execution sandbox                     │
+│      - `<ToolChips />`, `<FilterTable />`, `<ApprovalCard />`          │
+└────────────────────────────────────────────────────────────────────────┘
+    </pre>
+
+    <h2 id="ai-cascade">PART 13 — MULTI-LLM FALLBACK CASCADE</h2>
+    <p>To guarantee 100% availability on free tiers without single-provider downtime, the backend server at <code>app/api/chat/route.ts</code> iterates through an ordered priority list of open foundation models:</p>
+    <ol>
+      <li><code>meta-llama/llama-3.3-70b-instruct:free</code> (Flagship open-weights model by Meta AI)</li>
+      <li><code>google/gemini-2.0-flash-lite-preview-02-05:free</code> (Ultra-low latency model by Google)</li>
+      <li><code>deepseek/deepseek-r1:free</code> (Chain-of-thought reasoning model)</li>
+      <li><code>mistralai/mistral-7b-instruct:free</code> (High-efficiency European open-weights model)</li>
+      <li><code>qwen/qwen-2.5-coder-32b-instruct:free</code> (Specialized code synthesis model by Alibaba Cloud)</li>
+    </ol>
+
+    <h2 id="grounding">PART 14 — REAL-TIME WEB GROUNDING</h2>
+    <p>The backend evaluates queries using a regular expression: <code>/search|news|weather|price|stock|today|latest|who is|current/i</code>. When triggered, the server executes an HTTP request to DuckDuckGo's HTML endpoint, parses search result anchors, extracts top snippets, and injects them into the LLM system prompt as real-time ground truth.</p>
+
+    <h2 id="audio-3d">PART 15 — 3D WEB AUDIO SHADER CORE</h2>
+    <p>Located in <code>components/voice-orb/</code>, the Web Audio API <code>AnalyserNode</code> performs Fast Fourier Transform analysis on microphone audio (FFT size 512):</p>
+    <ul>
+      <li><strong>Bass (0 – 250 Hz):</strong> Modulates overall sphere scale and macro pulsing.</li>
+      <li><strong>Mid (250 – 2000 Hz):</strong> Drives 3D Simplex Noise surface wave displacement in the GLSL vertex shader.</li>
+      <li><strong>High (2000 – 8000 Hz):</strong> Drives particle field turbulence and Fresnel rim lighting glow.</li>
+    </ul>
+
+    <h2 id="code-sandbox">PART 17 — IN-BROWSER CODE EXECUTION SANDBOX</h2>
+    <p>Inside <code>Jarvis/components/CodeBlock.tsx</code>, generated JavaScript/TypeScript code can be executed directly inside the user's browser by clicking <strong>`▶ Run`</strong>. The component isolates execution using <code>new Function("console", ...)</code>, captures <code>console.log</code> output, and renders it in an embedded on-screen terminal console.</p>
+
+    <h2 id="storage">PART 23 — STATE & DATABASE ARCHITECTURE</h2>
+    <div class="alert-box">
+      <strong>Database Status:</strong> The current project does not use persistent database storage (such as PostgreSQL, MongoDB, or Prisma). All conversation threads are serialized to JSON and managed in browser-local storage via <code>lib/chatStore.ts</code> under the key <code>"jarvis_chat_threads_v1"</code>.
+    </div>
+
+    <h2 id="security">PART 25 — SECURITY ARCHITECTURE</h2>
+    <ul>
+      <li><strong>Server-Side API Key Isolation:</strong> <code>OPENROUTER_API_KEY</code> is accessed exclusively in <code>app/api/chat/route.ts</code> and is never bundled into client JavaScript.</li>
+      <li><strong>Git Protection:</strong> <code>.env*.local</code> is strictly registered in <code>.gitignore</code>.</li>
+      <li><strong>Electron Context Isolation:</strong> <code>electron/main.js</code> enforces <code>contextIsolation: true</code> and <code>nodeIntegration: false</code>.</li>
+      <li><strong>External Link Sandbox:</strong> Electron intercepts external URLs via <code>shell.openExternal</code> to protect the desktop host.</li>
+    </ul>
+
+    <h2 id="speech">PART 41 — 3-MINUTE PRESENTATION SPEECH</h2>
+    <blockquote>
+      "Good morning, respected members of the review panel. My name is [Your Name], and today I am presenting <strong>JARVIS AI</strong>, an AI Engineering Assistant designed specifically to accelerate software development workflows.<br><br>
+      <strong>The Problem:</strong> Developers currently face constant productivity loss by switching between web searches, documentation, separate AI chat tabs, and external terminals. Furthermore, standard AI chatbots often suffer from API rate limits and lack the ability to run code interactively.<br><br>
+      <strong>Our Proposed System:</strong> We built JARVIS AI using <strong>Next.js 14</strong>, <strong>TypeScript</strong>, and <strong>Electron</strong>. On the server side, JARVIS features a <strong>Multi-Model Fallback Cascade</strong> that cycles through five state-of-the-art open models on OpenRouter—including Llama 3.3, Gemini 2.0, and DeepSeek R1—guaranteeing continuous uptime. When a user asks about recent tech releases or news, our backend automatically performs real-time DuckDuckGo web scraping to ground the AI's response in current facts.<br><br>
+      <strong>Interactive Features:</strong> On the client side, JARVIS does not just return static text. It provides an embedded code execution sandbox where users can run JavaScript code with one click, a thread management system stored in <code>localStorage</code>, and an audio-reactive 3D neural orb powered by Three.js and custom GLSL vertex shaders driven by Web Audio FFT analysis.<br><br>
+      In conclusion, JARVIS AI bridges the gap between AI reasoning, live web grounding, and code execution in a fast, privacy-focused desktop application. Thank you, and I am now ready for your questions."
+    </blockquote>
+
+    <h2 id="viva-qa">PART 42 & 43 — TOP VIVA QUESTIONS & CRISP ANSWERS</h2>
+    <div class="qa-card">
+      <strong>Q1: What is JARVIS AI?</strong>
+      <p>A hybrid desktop and web AI engineering workspace built with Next.js 14, TypeScript, Three.js, and Electron, featuring a multi-model fallback cascade, live web grounding, and an in-browser code sandbox.</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q2: What is the benefit of the Multi-Model Cascade?</strong>
+      <p>It guarantees near-100% availability on free tiers by automatically catching 429 rate limits or timeouts and falling over to alternative models (Llama 3.3, Gemini 2.0, DeepSeek R1, Mistral, Qwen).</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q3: How does the system handle real-time queries?</strong>
+      <p>The Next.js route handler tests queries with a temporal regex, scrapes live search snippets from DuckDuckGo HTML, and injects those facts into the LLM system prompt.</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q4: How does the 3D orb react to voice?</strong>
+      <p>Web Audio API decomposes microphone input into frequency bins via Fast Fourier Transform (FFT). These frequency values modulate 3D Simplex Noise vertex displacement inside a custom GLSL shader at 60 FPS.</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q5: How does the code runner work?</strong>
+      <p>Inside <code>CodeBlock.tsx</code>, code is dynamically executed using JavaScript's <code>new Function("console", ...)</code> constructor, intercepting <code>console.log</code> calls to display live output in an embedded terminal.</p>
+    </div>
+
+    <h2 id="trick-qa">PART 44 — 17 DIFFICULT TRICK QUESTIONS & DEFENSE</h2>
+    <div class="qa-card">
+      <strong>Q: Why use an external LLM API instead of training your own model?</strong>
+      <p>Training a 70B parameter model requires millions of dollars in GPU clusters. Our engineering objective was to design the orchestration, real-time web grounding, resilience cascade, and interactive developer environment leveraging foundation models via OpenRouter.</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q: Is an LLM an algorithm?</strong>
+      <p>An LLM is a transformer neural network architecture; our project implements custom algorithms including Web Audio FFT frequency binning, GLSL Simplex Noise vertex displacement, and cascade failover loops.</p>
+    </div>
+    <div class="qa-card">
+      <strong>Q: How do you prevent hallucinations if you don't use a Vector Database?</strong>
+      <p>We prevent temporal hallucinations by dynamically intercepting time-sensitive queries, scraping live search results from DuckDuckGo, and injecting those factual snippets into the LLM's prompt context.</p>
+    </div>
+
+    <h2 id="cheat-sheet">PART 48 — ONE-PAGE REVISION CHEAT SHEET</h2>
+    <pre>
+================================================================================
+                        JARVIS AI — REVISION CHEAT SHEET
+================================================================================
+PROJECT:        JARVIS AI (jarvis-ai-desktop v2.2.0)
+DOMAIN:         AI Engineering Tools / Full-Stack Web & Desktop Computing
+PROBLEM:        Developer context switching, AI API downtimes, and static outputs.
+SOLUTION:       A unified Next.js + Electron workspace with a 5-LLM fallback cascade,
+                live DuckDuckGo web grounding, and an interactive code sandbox.
+
+FRONTEND:       Next.js 14 App Router, React 18, Tailwind CSS, Framer Motion
+3D CORE:        Three.js, React Three Fiber, GLSL Simplex Noise Shader, Web Audio FFT
+BACKEND:        Next.js Route Handler (`app/api/chat/route.ts`)
+AI GATEWAY:     OpenRouter API (Llama 3.3 70B, Gemini 2.0, DeepSeek R1, Mistral, Qwen)
+DATABASE:       None (Client-side HTML5 LocalStorage persistence in `lib/chatStore.ts`)
+AUTH:           Not implemented (Client-side UI mock)
+DESKTOP:        Electron 29 (Context isolation enabled, launched via batch script)
+
+MAIN FEATURES:
+  1. Multi-Model Failover Cascade across 5 foundation LLMs.
+  2. Live Web Grounding via DuckDuckGo HTML scraping.
+  3. In-Browser JavaScript/TypeScript Runnable Code Sandbox (`CodeBlock.tsx`).
+  4. 3D Audio-Reactive Mesh Visualizer driven by microphone FFT analysis.
+  5. Local Thread Management with search and auto-titling.
+
+DATA FLOW:
+  User Prompt ──► LocalStore (Optimistic UI) ──► POST /api/chat ──►
+  Temporal Regex Check ──► DuckDuckGo Scrape ──► OpenRouter Model Cascade ──►
+  JSON Response ──► Dynamic Intent Widget Rendering (Runnable Code, Tables)
+================================================================================
+    </pre>
+
+  </div>
+
+</body>
+</html>

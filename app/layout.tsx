@@ -15,8 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JARVIS AI — AI Engineering Assistant",
-  description: "Ultra-minimalist Next.js 14 AI Engineering Workspace inspired by Linear and Vercel.",
+  title: "J.A.R.V.I.S AI — Intelligence Assistant",
+  description: "Next.js 14 AI Assistant Workspace powered by J.A.R.V.I.S AI.",
 };
 
 export default function RootLayout({
@@ -25,9 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth h-full">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 min-h-screen`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-[#08080a] text-zinc-100 antialiased h-full overflow-hidden m-0 p-0`}
       >
         {children}
       </body>

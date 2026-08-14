@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, Lightbulb, CheckCircle2 } from "lucide-react";
 
 interface QuickActionsProps {
   onSelect: (prompt: string) => void;
@@ -10,51 +9,42 @@ interface QuickActionsProps {
 export default function QuickActions({ onSelect }: QuickActionsProps) {
   const cards = [
     {
-      icon: Sparkles,
-      title: "Synthesize Data",
-      description: "Summarize metrics, logs, or codebase diffs",
-      prompt: "Synthesize data and provide key insights on performance logs",
+      title: "Smart Budget",
+      description: "A budget that fits your lifestyle, not the other way around",
+      prompt: "Help me set up a smart budget tailored to my monthly lifestyle and goals.",
     },
     {
-      icon: Lightbulb,
-      title: "Creative Brainstorm",
-      description: "Explore new features or system architecture",
-      prompt: "Brainstorm high-impact features for modern AI developer toolkits",
+      title: "Analytics",
+      description: "Analytics empowers individuals and businesses to make smarter",
+      prompt: "Generate an analytics overview to help make smarter decisions.",
     },
     {
-      icon: CheckCircle2,
-      title: "Check Facts",
-      description: "Verify technical specs or API compatibility",
-      prompt: "Check facts and validate TypeScript interface compatibility",
+      title: "Spending",
+      description: "Spending is the way individuals and businesses use their financial",
+      prompt: "Break down spending habits and offer financial optimization advice.",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 w-full max-w-2xl">
-      {cards.map((card, i) => {
-        const Icon = card.icon;
-        return (
-          <motion.button
-            key={card.title}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 * i, duration: 0.2 }}
-            whileHover={{ y: -1.5 }}
-            onClick={() => onSelect(card.prompt)}
-            className="group flex flex-col items-start p-3 text-left rounded-lg border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-md hover:border-violet-500/40 hover:bg-zinc-800/50 shadow-sm transition-all duration-200"
-          >
-            <div className="mb-2 flex size-6 items-center justify-center rounded-md bg-zinc-800/80 text-zinc-400 group-hover:text-violet-400 group-hover:bg-violet-500/10 transition-colors">
-              <Icon className="size-3.5" />
-            </div>
-            <span className="text-[12px] font-medium text-zinc-200 group-hover:text-violet-300 transition-colors">
-              {card.title}
-            </span>
-            <span className="mt-0.5 text-[10.5px] text-zinc-500 line-clamp-2 leading-snug">
-              {card.description}
-            </span>
-          </motion.button>
-        );
-      })}
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 w-full max-w-3xl">
+      {cards.map((card, i) => (
+        <motion.button
+          key={card.title}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.06 * i, duration: 0.2 }}
+          whileHover={{ y: -2 }}
+          onClick={() => onSelect(card.prompt)}
+          className="group flex flex-col items-start p-4 text-left rounded-none border border-orange-500/20 bg-[#121216]/80 backdrop-blur-md hover:border-orange-500/60 hover:bg-[#181820] shadow-lg transition-all duration-200"
+        >
+          <span className="text-[13px] font-semibold text-zinc-100 group-hover:text-orange-400 transition-colors">
+            {card.title}
+          </span>
+          <span className="mt-1.5 text-[11px] text-zinc-400 leading-snug font-normal group-hover:text-zinc-300 transition-colors">
+            {card.description}
+          </span>
+        </motion.button>
+      ))}
     </div>
   );
 }
